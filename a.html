@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Screen YouTube Background</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }       
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+        }
+        .controls button {
+            margin: 5px;
+            padding: 20px;
+            font-size: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #intro, #outro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+            opacity: 1;
+            transition: opacity 6s;
+        }
+        @keyframes moveUp {
+            from {
+                bottom: 0;
+            }
+            to {
+                bottom: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-background">
+        <iframe id="video" width="100%" height="100%"  src="https://www.youtube-nocookie.com/embed?listType=playlist&list=PLL_BdW0gpPMMeajrL0sKs7bwFO-e8NRpJ&autoplay=1&start=5&modestbranding=1&mute=0&loop=1&iv_load_policy=3&controls=0&showinfo=0&autohide=1&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <script>
+        function getRandomIndex() {
+            return Math.floor(Math.random() * 1) + 1;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var iframe = document.getElementById('video');
+            var src = iframe.src;
+            var newSrc = src.replace(/index=\d+/, 'index=' + getRandomIndex());
+            iframe.src = newSrc;
+        });
+    </script>
+    <div class="content">
+        <!-- <h1>NIEXCHE</h1>
+        <p>This is a sample text over the video background.</p> -->
+    </div>
+    <div class="controls">
+        <button id="muteUnmute">Mute</button>
+    </div>
+    <div id="intro" style="position: absolute; background-color: transparent; width: 73vw; height: 40vh; border: 30vh solid rgb(0, 0, 0);
+    ">
+        <!-- <h1 style="position: absolute; bottom: 0; animation: moveUp 6s forwards;">HATE</h1> -->
+    </divs>
+    <!-- <div id="outro" style="display: none;">
+        <h1 style="position: absolute; bottom: 0; animation: moveUp 6s forwards;">wait!</h1>
+    </div> -->
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('video', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            var muteUnmuteButton = document.getElementById('muteUnmute');
+
+            muteUnmuteButton.addEventListener('click', function() {
+                if (player.isMuted()) {
+                    player.unMute();
+                    muteUnmuteButton.textContent = 'Mute';
+                } else {
+                    player.mute();
+                    muteUnmuteButton.textContent = 'Unmute';
+                }
+            });
+
+            checkVideoTime();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                checkVideoTime();
+            }
+        }
+
+        function checkVideoTime() {
+            setInterval(function() {
+                var duration = player.getDuration();
+                var currentTime = player.getCurrentTime();
+                if (duration - currentTime <= 1) {
+                    document.getElementById('outro').style.display = 'flex';
+                    setTimeout(function() {
+                        document.getElementById('outro').style.display = 'none';
+                    }, 6000);
+                }
+            }, 1000);
+        }
+
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('intro').style.display = 'none';
+            }, 6000);
+        };
+    </script>
+</body>
+</html>
