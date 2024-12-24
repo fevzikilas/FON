@@ -114,7 +114,7 @@
             startButton.addEventListener('click', function() {
                 event.target.playVideo();
                 document.getElementById('intro').style.display = 'none';
-                startButton.style.display = 'none'; // Hide the start button
+                startButton.style.visibility = 'hidden'; // Hide the start button
             });
 
             var muteUnmuteButton = document.getElementById('muteUnmute');
@@ -128,9 +128,9 @@
                 }
             });
 
-            startButton.click();
-
-            checkVideoTime();
+            setTimeout(function() {
+                startButton.click();
+            }, 3000);
         }
 
         function onPlayerStateChange(event) {
