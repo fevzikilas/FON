@@ -113,8 +113,8 @@
             var startButton = document.getElementById('startButton');
             startButton.addEventListener('click', function() {
                 event.target.playVideo();
-                document.getElementById('intro').style.display = 'none';
-                startButton.style.visibility = 'hidden'; // Hide the start button
+                startButton.click();
+                startButton.style.display = 'none'; 
             });
 
             var muteUnmuteButton = document.getElementById('muteUnmute');
