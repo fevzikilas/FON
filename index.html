@@ -113,7 +113,6 @@
             var startButton = document.getElementById('startButton');
             startButton.addEventListener('click', function() {
                 event.target.playVideo();
-                startButton.click();
                 startButton.style.display = 'none'; 
             });
 
@@ -129,8 +128,8 @@
             });
 
             setTimeout(function() {
-                startButton.click();
-            }, 3000);
+                event.target.playVideo();
+            }, 1000);
         }
 
         function onPlayerStateChange(event) {
