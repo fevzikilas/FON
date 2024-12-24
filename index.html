@@ -112,7 +112,10 @@
         }
 
         function onPlayerReady(event) {
-            event.target.playVideo();
+            setTimeout(function() {
+                event.target.playVideo();
+            }, 3000);
+
             var muteUnmuteButton = document.getElementById('muteUnmute');
 
             muteUnmuteButton.addEventListener('click', function() {
