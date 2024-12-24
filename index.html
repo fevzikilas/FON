@@ -68,7 +68,7 @@
 </head>
 <body>
     <div class="video-background">
-        <iframe id="video" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed?listType=playlist&list=PLL_BdW0gpPMMeajrL0sKs7bwFO-e8NRpJ&autoplay=1&start=5&modestbranding=1&mute=0&loop=1&iv_load_policy=3&controls=0&showinfo=0&autohide=1&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="video" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed?listType=playlist&list=PLL_BdW0gpPMMeajrL0sKs7bwFO-e8NRpJ&autoplay=0&start=5&modestbranding=1&mute=0&loop=1&iv_load_policy=3&controls=0&showinfo=0&autohide=1&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
     <script>
         function getRandomIndex() {
@@ -87,6 +87,7 @@
         <p>This is a sample text over the video background.</p> -->
     </div>
     <div class="controls">
+        <button id="start">Start</button>
         <button id="muteUnmute">Mute</button>
     </div>
     <div id="intro" style="position: absolute; background-color: transparent; width: 73vw; height: 40vh; border: 30vh solid rgb(0, 0, 0);">
@@ -112,12 +113,12 @@
         }
 
         function onPlayerReady(event) {
-            setTimeout(function() {
+            var startButton = document.getElementById('start');
+            startButton.addEventListener('click', function() {
                 event.target.playVideo();
-            }, 3000);
+            });
 
             var muteUnmuteButton = document.getElementById('muteUnmute');
-
             muteUnmuteButton.addEventListener('click', function() {
                 if (player.isMuted()) {
                     player.unMute();
