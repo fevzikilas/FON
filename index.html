@@ -27,46 +27,107 @@
             transform: translateY(-50%);
         }
         .controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2;
+            margin-top: 5px;
         }
         .controls button {
-            margin: 5px;
-            padding: 20px;
-            font-size: 30px;
-            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
             color: white;
             border: none;
             cursor: pointer;
+            border-radius:15px;
         }
+        #FocusLog {
+            font-size: 12px;
+            overflow-y: auto;
+            max-height: 100px;
+            margin-top: 10px;
+            text-shadow: 0 0 20px black;
 
+        }
+        #FocusLog p {
+            margin: 5px 0;
+        }
+        #timer {
+            font-size: 70px;
+            font-weight: bold;
+            text-shadow: 0 0 20px black;
+        }
+        #toggleFocus {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius:15px;
+        }
+        .timer-buttons {
+            margin-top: 20px;
+        }
+        .timer-buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius:15px;
+        }
     </style>
 </head>
 <body>
     <div class="video-background">
-        <iframe id="video" width="100%" height="100%" src="https://www.youtube-nocookie.com/embed?listType=playlist&list=PLL_BdW0gpPMMeajrL0sKs7bwFO-e8NRpJ&autoplay=1&start=5&modestbranding=1&mute=0&loop=1&iv_load_policy=3&controls=0&showinfo=0&autohide=1&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="video" width="100%" height="100%" 
+        src="https://www.youtube-nocookie.com/embed?listType=playlist&autoplay=1&start=5&modestbranding=1&mute=0&loop=1&iv_load_policy=3&controls=0&showinfo=0&autohide=1&rel=0&enablejsapi=1&list=PLhlhVLoA0A45qwBG42UYgGRxfq_Wm3Rmp" 
+        frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
     <script>
         function getRandomIndex() {
-            return Math.floor(Math.random() * 1) + 1;
+            return Math.floor(Math.random() * 37) + 1;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             var iframe = document.getElementById('video');
             var src = iframe.src;
-            var newSrc = src.replace(/index=\d+/, 'index=' + getRandomIndex());
+            var newSrc = src + '&index=' + getRandomIndex();
             iframe.src = newSrc;
         });
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                var iframe = document.getElementById('video');
+                var src = iframe.src;
+                var newSrc = src.replace(/&index=\d+/, '&index=' + getRandomIndex());
+                iframe.src = newSrc;
+            }
+        }
     </script>
     <div class="content">
-        <!-- <h1>NIEXCHE</h1>
-        <p>This is a sample text over the video background.</p> -->
+        <h2>NIECHE</h2>
+        
+        <div class="timer-buttons">
+            <button id="FocusButton">Intenditur Focus</button>
+            <button id="shortBreakButton">Short Break</button>
+            <button id="longBreakButton">Long Break</button>
+        </div>
+        <div id="Focus">
+            <div id="timer">50:00</div>
+            <button id="toggleFocus">Start Timer</button>
+        </div>
+        <div id="FocusLog"></div>
+        <div class="controls">
+            <button id="muteUnmute">Mute</button>
+        </div>
+        
     </div>
-    <div class="controls">
-        <button id="muteUnmute">Mute</button>
-        <button id="startButton">Start</button>
+    <div style="top: 80%; left: 15%;  position: absolute; color: white; text-align: center;">
+        <div class="controls">
+            <button id="startButton">Start Music</button>
+        </div>
     </div>
 
     <script>
@@ -110,6 +171,79 @@
                 checkVideoTime();
             }
         }
+    </script>
+    <script>
+        var FocusTimer;
+        var isBreak = false;
+        var timeLeft = 50 * 60; // 50 minutes in seconds
+        var taskCount = 0;
+        var isRunning = false;
+
+        function updateTimerDisplay() {
+            var minutes = Math.floor(timeLeft / 60);
+            var seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                (minutes < 10 ? '0' : '') + minutes + ':' + 
+                (seconds < 10 ? '0' : '') + seconds;
+        }
+
+        function startFocus() {
+            FocusTimer = setInterval(function() {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(FocusTimer);
+                    if (!isBreak) {
+                        logFocus();
+                    }
+                    isBreak = !isBreak;
+                    timeLeft = isBreak ? 10 * 60 : 50 * 60; // 10 minutes break, 50 minutes work
+                    updateTimerDisplay();
+                    startFocus();
+                }
+            }, 1000);
+        }
+
+        function stopFocus() {
+            clearInterval(FocusTimer);
+        }
+
+        function logFocus() {
+            var log = document.getElementById('FocusLog');
+            var entry = document.createElement('p');
+            taskCount++;
+            entry.textContent = `#${taskCount} TASK ${isBreak ? 'DONE' : '50:00 DONE'}`;
+            log.appendChild(entry);
+        }
+
+        document.getElementById('toggleFocus').addEventListener('click', function() {
+            if (isRunning) {
+                stopFocus();
+                this.textContent = 'Start Timer';
+            } else {
+                startFocus();
+                this.textContent = 'Stop  Timer';
+            }
+            isRunning = !isRunning;
+        });
+
+        document.getElementById('FocusButton').addEventListener('click', function() {
+            timeLeft = 50 * 60;
+            updateTimerDisplay();
+        });
+
+        document.getElementById('shortBreakButton').addEventListener('click', function() {
+            timeLeft = 10 * 60;
+            updateTimerDisplay();
+        });
+
+        document.getElementById('longBreakButton').addEventListener('click', function() {
+            timeLeft = 30 * 60;
+            updateTimerDisplay();
+        });
+
+        updateTimerDisplay();
     </script>
 </body>
 </html>
